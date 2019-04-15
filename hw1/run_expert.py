@@ -14,8 +14,11 @@ import pickle
 import tensorflow as tf
 import numpy as np
 import tf_util
-import gym
 import load_policy
+
+
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
+
 
 def main():
     import argparse
@@ -23,9 +26,8 @@ def main():
     parser.add_argument('expert_policy_file', type=str)
     parser.add_argument('envname', type=str)
     parser.add_argument('--render', action='store_true')
-    parser.add_argument("--max_timesteps", type=int)
-    parser.add_argument('--num_rollouts', type=int, default=20,
-                        help='Number of expert roll outs')
+    parser.add_argument('--max_timesteps', type=int)
+    parser.add_argument('--num_rollouts', type=int, default=20, help='Number of expert roll outs')
     args = parser.parse_args()
 
     print('loading and building expert policy')
@@ -49,7 +51,7 @@ def main():
             totalr = 0.
             steps = 0
             while not done:
-                action = policy_fn(obs[None,:])
+                action = policy_fn(obs[None, :])
                 observations.append(obs)
                 actions.append(action)
                 obs, r, done, _ = env.step(action)
@@ -57,7 +59,8 @@ def main():
                 steps += 1
                 if args.render:
                     env.render()
-                if steps % 100 == 0: print("%i/%i"%(steps, max_steps))
+                if steps % 100 == 0: 
+                    print('%i/%i' % (steps, max_steps))
                 if steps >= max_steps:
                     break
             returns.append(totalr)
@@ -69,8 +72,9 @@ def main():
         expert_data = {'observations': np.array(observations),
                        'actions': np.array(actions)}
 
-        with open(os.path.join('expert_data', args.envname + '.pkl'), 'wb') as f:
-            pickle.dump(expert_data, f, pickle.HIGHEST_PROTOCOL)
+        # with open(os.path.join('expert_data', args.envname + '.pkl'), 'wb') as f:
+        #     pickle.dump(expert_data, f, pickle.HIGHEST_PROTOCOL)
+
 
 if __name__ == '__main__':
     main()

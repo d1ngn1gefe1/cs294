@@ -1,5 +1,6 @@
 import pickle, tensorflow as tf, tf_util, numpy as np
 
+
 def load_policy(filename):
     with open(filename, 'rb') as f:
         data = pickle.loads(f.read())
@@ -35,7 +36,8 @@ def load_policy(filename):
         obsnorm_meansq = policy_params['obsnorm']['Standardizer']['meansq_1_D']
         obsnorm_stdev = np.sqrt(np.maximum(0, obsnorm_meansq - np.square(obsnorm_mean)))
         print('obs', obsnorm_mean.shape, obsnorm_stdev.shape)
-        normedobs_bo = (obs_bo - obsnorm_mean) / (obsnorm_stdev + 1e-6) # 1e-6 constant from Standardizer class in nn.py:409 in openai/imitation
+        # 1e-6 constant from Standardizer class in nn.py:409 in openai/imitation
+        normedobs_bo = (obs_bo - obsnorm_mean) / (obsnorm_stdev + 1e-6)
 
         curr_activations_bd = normedobs_bo
 
